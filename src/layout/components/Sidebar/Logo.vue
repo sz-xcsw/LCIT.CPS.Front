@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      title: "JuQent CPS", //LCIT MES Cloud
+      title: "LMS Cloud", //LCIT MES Cloud
       logo: logoImg,
     };
   },
