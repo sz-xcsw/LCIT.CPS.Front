@@ -89,9 +89,15 @@
                 >操作<i class="el-icon-arrow-down el-icon--right"></i
               ></span>
               <el-dropdown-menu slot="dropdown" style="width: 150px">
+                <!-- <el-dropdown-item
+                  icon="el-icon-edit"
+                  @click.native="generateFrontCode(scope.row)"
+                  v-hasPermi="['tool:gen:edit']"
+                  >前端代码</el-dropdown-item
+                > -->
                 <el-dropdown-item
                   icon="el-icon-edit"
-                  @click.native="handlePreview(scope.row)"
+                  @click.native="generateCSharpCode(scope.row)"
                   v-hasPermi="['tool:gen:edit']"
                   >生成代码</el-dropdown-item
                 >
@@ -124,7 +130,7 @@
               type="text"
               size="small"
               icon="el-icon-view"
-              @click="handlePreview(scope.row)"
+              @click="generateCSharpCode(scope.row)"
               v-hasPermi="['tool:gen:preview']"
               >预览</el-button
             >
@@ -165,18 +171,21 @@
       top="5vh"
       append-to-body
     >
-      <el-tabs>
+      <el-tabs v-model="preview.activeTab">
         <el-tab-pane
           v-for="(item, index) in preview.data"
           :label="item.title"
-          :name="index"
+          :name="item.title"
           :key="index"
         >
           <pre>{{ item.content }}</pre>
         </el-tab-pane>
       </el-tabs>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="info" :loading="downloadLoading" @click="exportCode"
+          >导出 Zip</el-button
+        >
+        <!-- <el-button type="primary" @click="submitForm">确 定</el-button> -->
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -195,6 +204,7 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      downloadLoading: false,
       // 唯一标识符
       uniqueId: "",
       // 选中数组
@@ -212,8 +222,9 @@ export default {
       // 预览参数
       preview: {
         open: false,
-        title: "代码预览",
+        title: "生成后端代码",
         data: {},
+        activeTab: "",
       },
     };
   },
@@ -261,14 +272,15 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    /** 预览按钮 */
-    handlePreview(row) {
+    /** 生成后端代码 */
+    generateCSharpCode(row) {
       previewTable(row.tableName).then((response) => {
-        debugger;
         this.preview.data = response.result.items;
         this.preview.open = true;
+        this.preview.activeTab = response.result.items[0].title;
       });
     },
+    generateFrontCode(row) {},
     /** 修改按钮操作 */
     handleEditTable(row) {
       const tableId = row.tableId || this.ids[0];
@@ -277,6 +289,14 @@ export default {
     // 取消按钮
     cancel() {
       this.preview.open = false;
+    },
+    // 导出代码
+    exportCode() {
+      this.downloadLoading = true;
+      import("@/vendor/Export2Zip").then((zip) => {
+        zip.export_code_to_zip(this.preview.data);
+        this.downloadLoading = false;
+      });
     },
   },
 };

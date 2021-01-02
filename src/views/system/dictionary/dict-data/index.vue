@@ -287,8 +287,8 @@ export default {
       typeOptions: [],
       // 查询参数
       queryParams: {
-        pageNum: 1,
         pageSize: 10,
+        pageNum: 1,
         typeId: undefined,
         keyword: undefined,
       },
