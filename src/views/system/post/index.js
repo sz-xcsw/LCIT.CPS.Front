@@ -4,7 +4,6 @@ import {
     delPost,
     addPost,
     updatePost,
-    exportPost,
     changeStatus,
 } from "@/api/system/post";
 
@@ -30,14 +29,11 @@ export default {
             multiple: true,
             // 选中的数据
             multipleSelection: [],
-            // 激活状态数据字典
-            // statusOptions: [],
             // 查询参数
             queryParams: {
                 pageNum: 1,
                 pageSize: 10,
                 keyword: undefined,
-                // status: undefined,
                 skipCount: 0,
             },
             // 表单参数
@@ -58,16 +54,9 @@ export default {
     },
     created() {
         this.getList();
-        // this.getDicts("sys_normal_disable").then((response) => {
-        // this.statusOptions = response.data;
-        // });
-        // this.statusOptions = [
-        // { dictValue: true, dictLabel: "是" },
-        // { dictValue: false, dictLabel: "否" },
-        // ];        
     },
     methods: {
-        /** 查询岗位列表 */
+        //查询列表
         getList() {
             this.loading = true;
             listPost(this.addDateRange(this.queryParams, this.dateRange)).then((response) => {
@@ -76,16 +65,11 @@ export default {
                 this.loading = false;
             });
         },
-        // 岗位状态字典翻译
-        // statusFormat(row, column) {
-        // return this.selectDictLabel(this.statusOptions, row.isActive);
-        // },
-        // 取消按钮
         cancel() {
             this.open = false;
             this.reset();
         },
-        // 表单重置
+        //表单重置
         reset() {
             this.form = {
                 id: undefined,
@@ -93,29 +77,27 @@ export default {
                 postName: undefined,
                 isActive: false,
                 sort: 0,
-                // status: "0",
                 remark: undefined,
             };
             this.resetForm("form");
         },
-        /** 搜索按钮操作 */
+        //查找
         handleQuery() {
             this.queryParams.pageNum = 1;
             this.getList();
         },
-        /** 重置按钮操作 */
+        //重置
         resetQuery() {
             this.dateRange = [];
             this.resetForm("queryForm");
             this.handleQuery();
         },
-        // 多选框选中数据
+        //多选框选中数据
         handleSelectionChange(selection) {
             this.ids = selection.map((item) => item.id);
             this.multipleSelection = selection;
             this.multiple = !selection.length;
         },
-
         //修改激活状态
         handleStatus(row) {
             changeStatus(row.id).then((response) => {
@@ -126,14 +108,14 @@ export default {
                 this.getList();
             });
         },
-        /** 新增按钮操作 */
+        //新增
         handleAdd() {
             this.reset();
             this.open = true;
             this.title = "添加岗位";
             this.form.isActive = true;
         },
-        /** 修改按钮操作 */
+        //修改
         handleUpdate(row) {
             this.reset();
             const id = row.id;
@@ -143,7 +125,7 @@ export default {
                 this.title = "修改岗位";
             });
         },
-        /** 提交按钮 */
+        //提交
         submitForm: function () {
             this.$refs["form"].validate((valid) => {
                 if (valid) {
@@ -167,9 +149,8 @@ export default {
                 }
             });
         },
-        /** 行内删除按钮操作 */
+        //行内删除
         handleDelete(row) {
-            debugger;
             const ids = (row.id || this.ids) + "";
             this.$confirm('是否确认删除岗位编号为"' + ids + '"的数据项?', "警告", {
                 confirmButtonText: "确定",
@@ -185,7 +166,7 @@ export default {
                 })
                 .catch(function () { });
         },
-        /** 导出按钮操作 */
+        //导出
         handleExport() {
             import("@/vendor/Export2Excel").then((excel) => {
                 const tHeader = this.getTableColumnNames(this.$refs.multipleTable);

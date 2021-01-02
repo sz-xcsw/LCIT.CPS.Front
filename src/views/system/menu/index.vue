@@ -279,10 +279,10 @@
           <el-col :span="12">
             <el-form-item
               v-if="form.menuType != 'Func'"
-              label="路由地址"
+              label="路由路径"
               prop="path"
             >
-              <el-input v-model="form.path" placeholder="请输入路由地址" />
+              <el-input v-model="form.path" placeholder="请输入路由路径" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="form.menuType == 'Menu'">

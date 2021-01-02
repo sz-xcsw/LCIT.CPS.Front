@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      title: "LMS Cloud", //LCIT MES Cloud
+      title: "工业互联网平台CPS", //LCIT MES Cloud
       logo: logoImg,
     };
   },

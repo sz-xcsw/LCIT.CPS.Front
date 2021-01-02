@@ -30,21 +30,6 @@
               end-placeholder="结束日期"
             ></el-date-picker>
           </el-form-item>
-          <!-- <el-form-item label="状态" prop="status">
-            <el-select
-              v-model="queryParams.status"
-              placeholder="岗位状态"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in statusOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item> -->
         </el-row>
       </el-form>
     </el-row>
@@ -127,12 +112,6 @@
             ></el-switch>
           </template>
         </el-table-column>
-        <!-- <el-table-column
-          label="状态"
-          align="center"
-          prop="isActive"
-          :formatter="statusFormat"
-        /> -->
         <el-table-column
           label="创建时间"
           align="center"
@@ -218,16 +197,6 @@
               <el-checkbox v-model="form.isActive">是否激活</el-checkbox>
             </el-form-item>
           </el-col>
-          <!-- <el-form-item label="岗位状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-              >{{ dict.dictLabel }}</el-radio
-            >
-          </el-radio-group>
-        </el-form-item> -->
           <el-col :span="24">
             <el-form-item label="备注" prop="remark">
               <el-input

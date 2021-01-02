@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询岗位列表
+//查询岗位列表
 export function listPost(query) {
   return request({
     url: '/services/app/Post/GetAll',
@@ -9,18 +9,18 @@ export function listPost(query) {
   })
 }
 
-// 查询岗位详细
-export function getPost(postId) {
+//查询岗位详细
+export function getPost(id) {
   return request({
     url: '/services/app/Post/Get',
     method: 'get',
     params: {
-      id: postId
+      id: id
     }
   })
 }
 
-// 新增岗位
+//新增岗位
 export function addPost(data) {
   return request({
     url: '/services/app/Post/Create',
@@ -29,7 +29,7 @@ export function addPost(data) {
   })
 }
 
-// 修改岗位
+//修改岗位
 export function updatePost(data) {
   return request({
     url: '/services/app/Post/Update',
@@ -38,27 +38,18 @@ export function updatePost(data) {
   })
 }
 
-// 删除岗位（行内删除和选择性删除）
-export function delPost(postId) {
+//删除岗位（行内删除和选择性删除）
+export function delPost(ids) {
   return request({
     url: '/services/app/Post/Delete',
     method: 'delete',
     params: {
-      ids: postId
+      ids: ids
     }
   })
 }
 
-// 导出岗位
-export function exportPost(query) {
-  return request({
-    url: '/system/post/export',
-    method: 'get',
-    params: query
-  })
-}
-
-// 改变激活状态
+//改变激活状态
 export function changeStatus(id) {
   return request({
     url: '/services/app/Post/ChangeStatus',

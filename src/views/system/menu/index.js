@@ -50,7 +50,7 @@ export default {
                     { required: true, message: "菜单顺序不能为空", trigger: "blur" },
                 ],
                 path: [
-                    { required: true, message: "路由地址不能为空", trigger: "blur" },
+                    { required: true, message: "路由路径不能为空", trigger: "blur" },
                 ],
                 component: [
                     { required: true, message: "组件路径不能为空", trigger: "blur" },
@@ -190,7 +190,7 @@ export default {
                         addMenu(this.form).then((response) => {
                             if (response.success) {
                                 this.msgSuccess("新增成功");
-                                // this.open = false;
+                                this.open = false;
                                 this.getList();
                             }
                         });
