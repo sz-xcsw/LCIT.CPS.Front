@@ -265,7 +265,6 @@ import {
   generateCodes,
   delTable,
   getTableColumns,
-  getFrontCode,
   getModuleNames,
 } from "@/api/tool/gen";
 import importTable from "./importTable";
@@ -332,7 +331,7 @@ export default {
         open: false,
         title: "生成代码参数设置",
       },
-      // 生成代码参数
+      // 生成代码
       codingPreview: {
         open: false,
         title: "生成代码",
@@ -391,10 +390,6 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.getList();
-    },
-    /** 打开导入表弹窗 */
-    openImportTable() {
-      this.$refs.import.show();
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -470,7 +465,6 @@ export default {
               this.codingPreview.data = response.result.items;
               this.codingPreview.open = true;
               this.codingPreview.activeTab = response.result.items[0].title;
-
               this.codingForm.open = false;
             }
           });

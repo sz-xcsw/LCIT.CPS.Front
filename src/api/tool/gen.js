@@ -69,15 +69,6 @@ export function getTableColumns(tableName) {
   })
 }
 
-// 生成前端代码
-export function getFrontCode(formParams) {
-  return request({
-    url: '/services/app/Coding/GenerateFrontCode',
-    method: 'post',
-    data: formParams
-  })
-}
-
 //获取模块名称
 export function getModuleNames() {
   return request({
