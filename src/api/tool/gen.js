@@ -42,7 +42,7 @@ export function importTable(data) {
     params: data
   })
 }
-// 生成后端代码
+// 生成代码
 export function generateCodes(formData) {
   return request({
     url: '/services/app/Coding/GenerateCodes',
