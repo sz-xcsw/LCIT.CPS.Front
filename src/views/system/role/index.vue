@@ -162,6 +162,7 @@
       :visible.sync="open"
       width="500px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-tabs v-model="activeTab">
         <el-tab-pane label="角色管理" name="role">
@@ -238,6 +239,7 @@
       :visible.sync="openDataScope"
       width="500px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form :model="form" label-width="80px">
         <el-form-item label="角色名称">

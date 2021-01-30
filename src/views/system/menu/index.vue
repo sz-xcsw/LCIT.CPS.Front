@@ -212,6 +212,7 @@
       :visible.sync="open"
       width="600px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
@@ -285,11 +286,6 @@
               <el-input v-model="form.path" placeholder="请输入路由路径" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType == 'Menu'">
-            <el-form-item label="组件路径" prop="component">
-              <el-input v-model="form.component" placeholder="请输入组件路径" />
-            </el-form-item>
-          </el-col>
           <el-col :span="12">
             <el-form-item label="显示排序" prop="orderNum">
               <el-input-number
@@ -297,6 +293,11 @@
                 controls-position="right"
                 :min="0"
               />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" v-if="form.menuType != 'Func'">
+            <el-form-item label="组件路径" prop="component">
+              <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
           <el-col :span="12">

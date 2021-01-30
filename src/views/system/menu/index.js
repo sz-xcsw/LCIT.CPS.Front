@@ -51,10 +51,7 @@ export default {
                 ],
                 path: [
                     { required: true, message: "路由路径不能为空", trigger: "blur" },
-                ],
-                component: [
-                    { required: true, message: "组件路径不能为空", trigger: "blur" },
-                ],
+                ]
             },
         };
     },

@@ -172,6 +172,7 @@
 
     <!-- 添加或修改来料入库对话框 -->
     <el-dialog
+      :close-on-click-modal="false"
       v-el-drag-dialog
       :title="title"
       :visible.sync="open"

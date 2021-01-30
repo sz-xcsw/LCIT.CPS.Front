@@ -96,6 +96,7 @@
 
     <!-- 生成代码表单构建 -->
     <el-dialog
+      :close-on-click-modal="false"
       :title="codingForm.title"
       :visible.sync="codingForm.open"
       width="900px"
@@ -232,6 +233,7 @@
 
     <!--生成代码展示-->
     <el-dialog
+      :close-on-click-modal="false"
       :title="codingPreview.title"
       :visible.sync="codingPreview.open"
       width="80%"

@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-row :gutter="24">
-      <!--部门数据-->
+      <!--分类数据-->
       <el-col :span="4" :xs="24" style="padding-left: 0px">
         <div class="head-container">
           <el-row>
             <el-col :span="24">
               <el-input
-                v-model="deptName"
-                placeholder="请输入部门名称"
+                v-model="categoryName"
+                placeholder="请输入分类名称"
                 clearable
                 size="mini"
                 prefix-icon="el-icon-search"
@@ -21,7 +21,7 @@
           <el-row>
             <el-col :span="24">
               <el-tree
-                :data="deptOptions"
+                :data="categoryOptions"
                 :props="defaultProps"
                 :expand-on-click-node="false"
                 :filter-node-method="filterNode"
@@ -36,7 +36,6 @@
 
       <el-col :span="20" :xs="24">
         <el-row :gutter="24" class="panel-row">
-          <!--用户数据-->
           <el-form
             :model="queryParams"
             ref="queryForm"
@@ -47,7 +46,7 @@
               <el-form-item label="关键字" prop="keyword">
                 <el-input
                   v-model="queryParams.keyword"
-                  placeholder="请输入用户名或手机号码"
+                  placeholder="请输入物料名称或物料代码"
                   clearable
                   size="small"
                   style="width: 225px"
@@ -77,7 +76,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleAdd"
-              v-hasPermi="['system:user:add']"
+              v-hasPermi="['system:material:add']"
               >新增</el-button
             >
           </el-col>
@@ -88,7 +87,7 @@
               size="mini"
               :disabled="!multiple"
               @click="handleDelete"
-              v-hasPermi="['system:user:remove']"
+              v-hasPermi="['system:material:remove']"
               >删除</el-button
             >
           </el-col>
@@ -98,7 +97,7 @@
               icon="el-icon-upload2"
               size="mini"
               @click="handleImport"
-              v-hasPermi="['system:user:import']"
+              v-hasPermi="['system:material:import']"
               >导入</el-button
             >
           </el-col>
@@ -108,7 +107,7 @@
               icon="el-icon-download"
               size="mini"
               @click="handleExport"
-              v-hasPermi="['system:user:export']"
+              v-hasPermi="['system:material:export']"
               >导出</el-button
             >
           </el-col>
@@ -118,7 +117,7 @@
               icon="el-icon-search"
               size="mini"
               @click="handleQuery"
-              v-hasPermi="['system:user:query']"
+              v-hasPermi="['system:material:query']"
               >查询</el-button
             >
           </el-col>
@@ -133,47 +132,46 @@
           <el-table
             ref="multipleTable"
             v-loading="loading"
-            height="380"
             border
-            :data="userList"
+            :data="materialList"
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column
-              label="用户名"
+              label="物料名称"
               sortable
               align="center"
-              prop="userName"
-              width="120"
+              prop="materialName"
               :show-overflow-tooltip="true"
             />
             <el-table-column
-              label="姓名"
+              label="物料代码"
               sortable
               align="center"
-              prop="name"
+              prop="materialCode"
               :show-overflow-tooltip="true"
             />
             <el-table-column
-              label="部门"
+              label="物品分类"
               sortable
               align="center"
-              prop="deptName"
+              prop="categoryName"
               :show-overflow-tooltip="true"
             />
             <el-table-column
-              label="手机号码"
+              label="单位"
+              sortable
               align="center"
-              prop="phoneNumber"
-              width="120"
+              prop="unit"
+              width="80"
+              :show-overflow-tooltip="true"
             />
             <el-table-column
-              label="电子邮箱"
+              label="激活状态"
+              prop="isActive"
+              width="100"
               align="center"
-              prop="emailAddress"
-              width="220"
-            />
-            <el-table-column label="激活状态" prop="isActive" align="center">
+            >
               <template slot-scope="scope">
                 <el-switch
                   v-model="scope.row.isActive"
@@ -209,13 +207,13 @@
                     <el-dropdown-item
                       icon="el-icon-edit"
                       @click.native="handleUpdate(scope.row)"
-                      v-hasPermi="['system:user:edit']"
+                      v-hasPermi="['system:material:edit']"
                       >修改</el-dropdown-item
                     >
                     <el-dropdown-item
                       icon="el-icon-delete"
                       @click.native="handleDelete(scope.row)"
-                      v-hasPermi="['system:user:remove']"
+                      v-hasPermi="['system:material:remove']"
                       >删除</el-dropdown-item
                     >
                   </el-dropdown-menu>
@@ -239,130 +237,173 @@
       v-el-drag-dialog
       :title="title"
       :visible.sync="open"
-      width="600px"
+      width="900px"
       append-to-body
       :close-on-click-modal="false"
     >
-      <el-tabs v-model="activeTab">
-        <el-tab-pane label="用户管理" name="user">
-          <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="用户名称" prop="userName">
-                  <el-input
-                    :disabled="form.id !== undefined"
-                    v-model="form.userName"
-                    placeholder="请输入用户名称"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="用户密码" prop="password">
-                  <el-input
-                    v-model="form.password"
-                    placeholder="请输入用户密码"
-                    type="password"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="用户姓名" prop="name">
-                  <el-input v-model="form.name" placeholder="请输入用户姓名" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="归属部门" prop="deptId">
-                  <!--树节点禁止选择 :disable-branch-nodes="true" -->
-                  <treeselect
-                    v-model="form.deptId"
-                    :options="deptOptions"
-                    :normalizer="normalizer"
-                    :show-count="true"
-                    placeholder="请选择归属部门"
-                    @select="selectDept"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="电子邮箱" prop="emailAddress">
-                  <el-input
-                    v-model="form.emailAddress"
-                    placeholder="请输入邮箱"
-                    maxlength="50"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="手机号码" prop="phoneNumber">
-                  <el-input
-                    v-model="form.phoneNumber"
-                    placeholder="请输入手机号码"
-                    maxlength="11"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="岗位">
-                  <el-select
-                    v-model="form.postIds"
-                    multiple
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in postOptions"
-                      :key="item.postId"
-                      :label="item.postName"
-                      :value="item.postId"
-                      :disabled="item.isActive == false"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item prop="isActive">
-                  <el-checkbox v-model="form.isActive">是否激活</el-checkbox>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="备注">
-                  <el-input
-                    v-model="form.remark"
-                    type="textarea"
-                    placeholder="请输入内容"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="角色维护" name="role">
-          <el-checkbox
-            v-for="(item, index) in roleOptions"
-            :key="index"
-            v-model="item.isChecked"
-            >{{ item.displayName }}</el-checkbox
-          >
-        </el-tab-pane>
-        <el-tab-pane label="权限维护" name="permission">
-          <el-tree
-            :data="menuOptions"
-            show-checkbox
-            ref="menu"
-            default-expand-all
-            node-key="id"
-            empty-text="加载中，请稍后"
-            :props="defaultProps"
-          ></el-tree>
-        </el-tab-pane>
-      </el-tabs>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="物料代码" prop="materialCode">
+              <el-input
+                :disabled="form.id !== undefined"
+                v-model="form.materialCode"
+                placeholder="请输入物料代码"
+                maxlength="40"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="物料名称" prop="materialName">
+              <el-input
+                v-model="form.materialName"
+                placeholder="请输入物料名称"
+                maxlength="40"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="物料分类" prop="categoryId">
+              <!--树节点禁止选择 :disable-branch-nodes="true" -->
+              <treeselect
+                v-model="form.categoryId"
+                :options="categoryOptions"
+                :normalizer="normalizer"
+                :show-count="true"
+                placeholder="请选择物料分类"
+                @select="selectMaterialCategory"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="物料规格" prop="standard">
+              <el-input v-model="form.standard" placeholder="请输入物料规格" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="计量单位" prop="unit">
+              <el-input
+                v-model="form.unit"
+                placeholder="请输入单位"
+                maxlength="40"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="海关编码" prop="hSCode">
+              <el-input
+                v-model="form.hSCode"
+                placeholder="请输入海关编码"
+                maxlength="40"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="单价" prop="cost">
+              <el-input-number
+                v-model="form.cost"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="毛重" prop="grossWeight">
+              <el-input-number
+                v-model="form.grossWeight"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="净重" prop="netWeight">
+              <el-input-number
+                v-model="form.netWeight"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="长度" prop="length">
+              <el-input-number
+                v-model="form.length"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item> </el-col
+          ><el-col :span="8">
+            <el-form-item label="宽度" prop="width">
+              <el-input-number
+                v-model="form.width"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="高度" prop="hign">
+              <el-input-number
+                v-model="form.hign"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="保质期(天)" prop="qualityPeriod">
+              <el-input-number
+                v-model="form.qualityPeriod"
+                controls-position="right"
+                :min="0"
+                style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item prop="isActive">
+              <el-checkbox v-model="form.isActive">是否激活</el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item prop="isExemption">
+              <el-checkbox v-model="form.isExemption">是否免检</el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item prop="isFIFO">
+              <el-checkbox v-model="form.isFIFO">先进先出</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注">
+              <el-input
+                v-model="form.remark"
+                type="textarea"
+                placeholder="请输入内容"
+              ></el-input>
+            </el-form-item> </el-col
+        ></el-row>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>

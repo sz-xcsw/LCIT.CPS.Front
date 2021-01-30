@@ -1,27 +1,27 @@
 import {
-    listDept,
-    getDept,
-    delDept,
-    addDept,
-    updateDept,
-    listDeptExcludeChild,
+    listMaterialCategory,
+    getMaterialCategory,
+    delMaterialCategory,
+    addMaterialCategory,
+    updateMaterialCategory,
+    listMaterialCategoryExcludeChild,
     changeStatus,
-    getDeptsByWhere,
-} from "@/api/system/dept";
+    getMaterialCategorysByWhere,
+} from "@/api/basic-data/material-manage/material-category/materialCategory";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
-    name: "Dept",
+    name: "MaterialCategory",
     components: { Treeselect },
     data() {
         return {
             // 遮罩层
             loading: true,
             // 表格树数据
-            deptList: [],
-            // 部门树选项
-            deptOptions: [],
+            materialCategoryList: [],
+            // 物品分类树选项
+            materialCategoryOptions: [],
             // 日期范围
             dateRange: [],
             // 弹出层标题
@@ -36,24 +36,14 @@ export default {
             form: {},
             // 表单校验
             rules: {
-                // parentId: [
-                //   { required: true, message: "上级部门不能为空", trigger: "blur" },
-                // ],
-                deptCode: [
-                    { required: true, message: "部门代码不能为空", trigger: "blur" },
+                categoryCode: [
+                    { required: true, message: "物品分类代码不能为空", trigger: "blur" },
                 ],
-                deptName: [
-                    { required: true, message: "部门名称不能为空", trigger: "blur" },
+                categoryName: [
+                    { required: true, message: "物品分类名称不能为空", trigger: "blur" },
                 ],
                 sort: [
                     { required: true, message: "部门顺序不能为空", trigger: "blur" },
-                ],
-                phone: [
-                    {
-                        pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                        message: "请输入正确的手机号码",
-                        trigger: "blur",
-                    },
                 ],
             },
         };
@@ -62,11 +52,11 @@ export default {
         this.getList();
     },
     methods: {
-        /** 查询部门列表 */
+        /** 查询物品分类列表 */
         getList() {
             this.loading = true;
-            listDept(this.queryParams).then((response) => {
-                this.deptList = this.handleTree(response.result.items, "id");
+            listMaterialCategory(this.queryParams).then((response) => {
+                this.materialCategoryList = this.handleTree(response.result.items, "id");
                 this.loading = false;
             });
         },
@@ -76,14 +66,14 @@ export default {
             this.resetForm("queryForm");
             this.handleQuery();
         },
-        /** 转换部门数据结构 */
+        /** 转换物品分类数据结构 */
         normalizer(node) {
             if (node.children && !node.children.length) {
                 delete node.children;
             }
             return {
                 id: node.id,
-                label: node.deptName,
+                label: node.categoryName,
                 children: node.children,
             };
         },
@@ -97,19 +87,18 @@ export default {
             this.form = {
                 id: undefined,
                 parentId: undefined,
-                deptName: undefined,
-                deptCode: undefined,
+                categoryName: undefined,
+                categoryCode: undefined,
                 sort: undefined,
-                leader: undefined,
-                phone: undefined,
+                remark: undefined,
                 isActive: undefined,
             };
             this.resetForm("form");
         },
         /** 搜索按钮操作 */
         handleQuery() {
-            getDeptsByWhere(this.addDateRange(this.queryParams, this.dateRange)).then((response) => {
-                this.deptList = this.handleTree(response.result.items, "id");
+            getMaterialCategorysByWhere(this.addDateRange(this.queryParams, this.dateRange)).then((response) => {
+                this.materialCategoryList = this.handleTree(response.result.items, "id");
                 this.loading = false;
             });
         },
@@ -120,21 +109,22 @@ export default {
                 this.form.parentId = row.id;
             }
             this.open = true;
-            this.title = "添加部门";
-            listDept(this.queryParams).then((response) => {
-                this.deptOptions = this.handleTree(response.result.items, "id");
+            this.form.isActive = true;
+            this.title = "添加物品分类";
+            listMaterialCategory(this.queryParams).then((response) => {
+                this.materialCategoryOptions = this.handleTree(response.result.items, "id");
             });
         },
         /** 修改按钮操作 */
         handleUpdate(row) {
             this.reset();
-            getDept(row.id).then((response) => {
+            getMaterialCategory(row.id).then((response) => {
                 this.form = response.result;
                 this.open = true;
-                this.title = "修改部门";
+                this.title = "修改物品分类";
             });
-            listDeptExcludeChild(row.id).then((response) => {
-                this.deptOptions = this.handleTree(response.result.items, "id");
+            listMaterialCategoryExcludeChild(row.id).then((response) => {
+                this.materialCategoryOptions = this.handleTree(response.result.items, "id");
             });
         },
         /** 提交按钮 */
@@ -142,7 +132,7 @@ export default {
             this.$refs["form"].validate((valid) => {
                 if (valid) {
                     if (this.form.id != undefined) {
-                        updateDept(this.form).then((response) => {
+                        updateMaterialCategory(this.form).then((response) => {
                             if (response.success) {
                                 this.msgSuccess("修改成功");
                                 this.open = false;
@@ -150,7 +140,7 @@ export default {
                             }
                         });
                     } else {
-                        addDept(this.form).then((response) => {
+                        addMaterialCategory(this.form).then((response) => {
                             if (response.success) {
                                 this.msgSuccess("新增成功");
                                 this.open = false;
@@ -164,7 +154,7 @@ export default {
         /** 删除按钮操作 */
         handleDelete(row) {
             this.$confirm(
-                '是否确认删除名称为"' + row.deptName + '"的数据项?',
+                '是否确认删除名称为"' + row.categoryName + '"的数据项?',
                 "警告",
                 {
                     confirmButtonText: "确定",
@@ -173,7 +163,7 @@ export default {
                 }
             )
                 .then(function () {
-                    return delDept(row.id);
+                    return delMaterialCategory(row.id);
                 })
                 .then(() => {
                     this.getList();

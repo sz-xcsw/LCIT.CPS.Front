@@ -11,7 +11,7 @@
           <el-form-item label="关键字" prop="keyword">
             <el-input
               v-model="queryParams.keyword"
-              placeholder="请输入部门代码或名称"
+              placeholder="请输入分类代码或名称"
               clearable
               size="small"
               style="width: 225px"
@@ -30,21 +30,6 @@
               end-placeholder="结束日期"
             ></el-date-picker>
           </el-form-item>
-          <!-- <el-form-item label="状态" prop="status">
-            <el-select
-              v-model="queryParams.status"
-              placeholder="部门状态"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in statusOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item> -->
         </el-row>
       </el-form>
     </el-row>
@@ -57,7 +42,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:dept:add']"
+          v-hasPermi="['system:material-category:add']"
           >新增</el-button
         >
       </el-col>
@@ -83,24 +68,29 @@
         default-expand-all
         border
         v-loading="loading"
-        :data="deptList"
+        :data="materialCategoryList"
         row-key="id"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
         <el-table-column
-          prop="deptName"
-          label="部门名称"
+          prop="categoryName"
+          label="分类名称"
           sortable
         ></el-table-column>
         <el-table-column
-          prop="deptCode"
-          label="部门代码"
+          prop="categoryCode"
+          label="分类代码"
           align="center"
           sortable
         ></el-table-column>
         <el-table-column
           prop="sort"
           label="排序"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
           align="center"
         ></el-table-column>
         <el-table-column label="激活状态" align="center" prop="isActive">
@@ -111,15 +101,6 @@
             ></el-switch>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="isActive" label="激活状态" align="center">
-          <template slot-scope="scope">
-            <el-tag
-              effect="dark"
-              :type="scope.row.isActive ? 'success' : 'info'"
-              >{{ scope.row.isActive ? "是" : "否" }}</el-tag
-            >
-          </template>
-        </el-table-column> -->
         <el-table-column label="创建时间" prop="creationTime" align="center">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.creationTime) }}</span>
@@ -143,13 +124,13 @@
                 <el-dropdown-item
                   icon="el-icon-edit"
                   @click.native="handleUpdate(scope.row)"
-                  v-hasPermi="['system:dept:edit']"
+                  v-hasPermi="['system:material-category:edit']"
                   >修改</el-dropdown-item
                 >
                 <el-dropdown-item
                   icon="el-icon-delete"
                   @click.native="handleDelete(scope.row)"
-                  v-hasPermi="['system:dept:remove']"
+                  v-hasPermi="['system:material-category:remove']"
                   >删除</el-dropdown-item
                 >
               </el-dropdown-menu>
@@ -159,12 +140,12 @@
       </el-table>
     </el-row>
 
-    <!-- 添加或修改部门对话框 -->
+    <!-- 添加或修改物品分类对话框 -->
     <el-dialog
       v-el-drag-dialog
       :title="title"
       :visible.sync="open"
-      width="600px"
+      width="500px"
       append-to-body
       :close-on-click-modal="false"
     >
@@ -174,23 +155,29 @@
             :span="24"
             v-if="form.parentId !== 0 && form.parentId !== null"
           >
-            <el-form-item label="上级部门" prop="parentId">
+            <el-form-item label="上级分类" prop="parentId">
               <treeselect
                 v-model="form.parentId"
-                :options="deptOptions"
+                :options="materialCategoryOptions"
                 :normalizer="normalizer"
-                placeholder="选择上级部门"
+                placeholder="选择上级分类"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="部门代码" prop="deptCode">
-              <el-input v-model="form.deptCode" placeholder="请输入部门代码" />
+          <el-col :span="24">
+            <el-form-item label="分类代码" prop="categoryCode">
+              <el-input
+                v-model="form.categoryCode"
+                placeholder="请输入分类代码"
+              />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="部门名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+          <el-col :span="24">
+            <el-form-item label="分类名称" prop="categoryName">
+              <el-input
+                v-model="form.categoryName"
+                placeholder="请输入分类名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -203,26 +190,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="leader">
-              <el-input
-                v-model="form.leader"
-                placeholder="请输入负责人"
-                maxlength="20"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone">
-              <el-input
-                v-model="form.phone"
-                placeholder="请输入联系电话"
-                maxlength="11"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item prop="isActive">
               <el-checkbox v-model="form.isActive">是否激活</el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="remark">
+              <el-input
+                v-model="form.remark"
+                type="textarea"
+                placeholder="请输入内容"
+              />
             </el-form-item>
           </el-col>
         </el-row>
