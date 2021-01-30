@@ -292,10 +292,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="海关编码" prop="hSCode">
+            <el-form-item label="品牌" prop="brand">
               <el-input
-                v-model="form.hSCode"
-                placeholder="请输入海关编码"
+                v-model="form.brand"
+                placeholder="请输入品牌"
                 maxlength="40"
               />
             </el-form-item>
@@ -372,6 +372,15 @@
                 controls-position="right"
                 :min="0"
                 style="width: 207px"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="海关编码" prop="hSCode">
+              <el-input
+                v-model="form.hSCode"
+                placeholder="请输入海关编码"
+                maxlength="40"
               />
             </el-form-item>
           </el-col>
