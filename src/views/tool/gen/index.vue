@@ -320,13 +320,13 @@ export default {
         moduleName: [
           { required: true, message: "模块名称不能为空", trigger: "blur" },
         ],
-        summary: [
-          {
-            required: true,
-            message: "请填写表字段中文注释",
-            trigger: "blur",
-          },
-        ],
+        // summary: [
+        //   {
+        //     required: true,
+        //     message: "请填写表字段中文注释",
+        //     trigger: "blur",
+        //   },
+        // ],
       },
       // 生成代码参数
       codingForm: {
@@ -458,10 +458,10 @@ export default {
     previewCode: function () {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.form.summary.indexOf('""') >= 0) {
-            this.msgError("请填写字段注释!");
-            return;
-          }
+          // if (this.form.summary.indexOf('""') >= 0) {
+          //   this.msgError("请填写字段注释!");
+          //   return;
+          // }
           generateCodes(this.form).then((response) => {
             if (response.success) {
               this.codingPreview.data = response.result.items;
